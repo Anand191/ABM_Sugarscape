@@ -19,15 +19,15 @@ from sugarscape.agents import SsAgent, Sugar
 from sugarscape.schedule import RandomActivationByBreed
 
 
-class Sugarscape2ConstantGrowback(Model):
+class SugarscapeSeasonalGrowback(Model):
     '''
-    Sugarscape 2 Constant Growback
+    Sugarscape Seasonal Growback
     '''
-
+    reproduce=0.01
     verbose = True  # Print-monitoring
 
     def __init__(self, height=50, width=50,
-                 initial_population=100):
+                 initial_population=100,reproduce=0.01):
         '''
         Create a new Constant Growback model with the given parameters.
 
@@ -39,10 +39,11 @@ class Sugarscape2ConstantGrowback(Model):
         self.height = height
         self.width = width
         self.initial_population = initial_population
+        self.reproduce=reproduce
 
         self.schedule = RandomActivationByBreed(self)
         self.grid = MultiGrid(self.height, self.width, torus=False)
-        self.datacollector = DataCollector({"SsAgent": lambda m: m.schedule.get_breed_count(SsAgent), })
+        self.datacollector = DataCollector({"SsAgent": lambda m: m.schedule.get_breed_count(SsAgent)})
 
         # Create sugar
         import numpy as np
@@ -58,9 +59,12 @@ class Sugarscape2ConstantGrowback(Model):
             x = random.randrange(self.width)
             y = random.randrange(self.height)
             sugar = random.randrange(6, 25)
-            metabolism = random.randrange(2, 4)
+            metabolism = random.randrange(1, 5)
             vision = random.randrange(1, 6)
-            ssa = SsAgent((x, y), self, False, sugar, metabolism, vision)
+            maxage = random.randrange(60,100)
+            age = 0
+            strategy=random.randint(0,1)
+            ssa = SsAgent((x, y), self, False, sugar, metabolism, vision,strategy, maxage, age)
             self.grid.place_agent(ssa, (x, y))
             self.schedule.add(ssa)
 
@@ -73,7 +77,7 @@ class Sugarscape2ConstantGrowback(Model):
             print([self.schedule.time,
                    self.schedule.get_breed_count(SsAgent)])
 
-    def run_model(self, step_count=200):
+    def run_model(self, step_count=10000):
 
         if self.verbose:
             print('Initial number Sugarscape Agent: ',

@@ -1,8 +1,9 @@
 from mesa.visualization.ModularVisualization import ModularServer
 from mesa.visualization.modules import CanvasGrid, ChartModule
+from mesa.visualization.UserParam import UserSettableParameter
 
 from sugarscape.agents import SsAgent, Sugar
-from sugarscape.model import Sugarscape2ConstantGrowback
+from sugarscape.model import SugarscapeSeasonalGrowback
 
 color_dic = {4: "#005C00",
              3: "#008300",
@@ -17,7 +18,11 @@ def SsAgent_portrayal(agent):
     portrayal = {}
 
     if type(agent) is SsAgent:
-        portrayal["Shape"] = "sugarscape/resources/ant.png"
+        #red=max,black=min
+        if agent.strategy==1:
+            portrayal["Shape"] = "sugarscape/resources/ant.png"
+        else:
+            portrayal["Shape"] = "sugarscape/resources/ant2.png"
         portrayal["scale"] = 0.9
         portrayal["Layer"] = 1
 
@@ -36,8 +41,13 @@ def SsAgent_portrayal(agent):
 
 
 canvas_element = CanvasGrid(SsAgent_portrayal, 50, 50, 500, 500)
-chart_element = ChartModule([{"Label": "SsAgent", "Color": "#AA0000"}])
+chart_element = ChartModule([{"Label": "SsAgent", "Color": "#AA0000"},{"Label": "ABC", "Color": "#666666"}])
 
-server = ModularServer(Sugarscape2ConstantGrowback, [canvas_element, chart_element],
-                       "Sugarscape 2 Constant Growback")
+model_params = {"initial_population": UserSettableParameter('slider', 'Initial Population', 100, 1, 500),
+               "reproduce": UserSettableParameter('slider', 'Reproduction Rate', 0.05, 0.00, 1.0,
+                                                        0.01,
+                                                        description="The rate at which agents reproduce.")}
+
+server = ModularServer(SugarscapeSeasonalGrowback, [canvas_element, chart_element],
+                       "Sugarscape Seasonal Growback", model_params)
 # server.launch()
