@@ -24,10 +24,16 @@ class SugarscapeSeasonalGrowback(Model):
     Sugarscape Seasonal Growback
     '''
     reproduce=0.01
+    min_vision=1
+    max_vision=10
+    min_metabolism=1
+    max_metabolism=6
+    summer_growth=2
+    winter_growth=15
     verbose = True  # Print-monitoring
 
     def __init__(self, height=50, width=50,
-                 initial_population=100,reproduce=0.01):
+                 initial_population=100,reproduce=0.01,min_vision=1,max_vision=10,min_metabolism=1,max_metabolism=6,summer_growth=2,winter_growth=15):
         '''
         Create a new Constant Growback model with the given parameters.
 
@@ -40,7 +46,11 @@ class SugarscapeSeasonalGrowback(Model):
         self.width = width
         self.initial_population = initial_population
         self.reproduce=reproduce
-
+        self.vision = random.randrange(min_vision, max_vision)
+        self.metabolism = random.randrange(min_metabolism, max_metabolism)
+        self.summer_growth=summer_growth
+        self.winter_growth=winter_growth
+        
         self.schedule = RandomActivationByBreed(self)
         self.grid = MultiGrid(self.height, self.width, torus=False)
         self.datacollector = DataCollector({"SsAgent": lambda m: m.schedule.get_breed_count_str0(SsAgent)
@@ -53,7 +63,7 @@ class SugarscapeSeasonalGrowback(Model):
         sugar_distribution = np.genfromtxt("sugarscape/sugar-map.txt")
         for _, x, y in self.grid.coord_iter():
             max_sugar = sugar_distribution[x, y]
-            sugar = Sugar((x, y), self, max_sugar)
+            sugar = Sugar((x, y), self, max_sugar,summer_growth,winter_growth)
             self.grid.place_agent(sugar, (x, y))
             self.schedule.add(sugar)
 
@@ -62,12 +72,12 @@ class SugarscapeSeasonalGrowback(Model):
             x = random.randrange(self.width)
             y = random.randrange(self.height)
             sugar = random.randrange(6, 12)
-            metabolism = random.randrange(1, 5)
-            vision = random.randrange(1, 10)
+            metabolism = random.randrange(min_metabolism, max_metabolism)
+            vision = random.randrange(min_vision, max_vision)
             maxage = random.randrange(60,100)
             age = 0
             strategy=random.randint(0,2)
-            influ=random.randint(1,8)
+            influ=random.randint(1,12)
             #influ=0
             ssa = SsAgent((x, y), self, False, sugar, metabolism, vision,strategy, maxage, age, influ)
             self.grid.place_agent(ssa, (x, y))

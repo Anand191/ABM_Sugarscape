@@ -61,7 +61,7 @@ class SsAgent(Agent):
         
         
         vonneighbors = [i for i in self.model.grid.get_neighborhood(self.pos, self.moore,
-                False, radius=1) if self.is_occupied(i)]
+                False, radius=2) if self.is_occupied(i)]
         num0 = len([strategy for strategy in vonneighbors if self.strategy == 0])+random.random()
         num1 = len([strategy for strategy in vonneighbors if self.strategy == 1])+random.random()
         num2 = len([strategy for strategy in vonneighbors if self.strategy == 2])+random.random()
@@ -80,6 +80,7 @@ class SsAgent(Agent):
             self.strategy=1
         else:
             self.strategy=0
+            #num(candidate)
        
         #Strategy 2
         #final_candidates = candidates
@@ -87,9 +88,11 @@ class SsAgent(Agent):
         if (self.strategy==0):
             final_candidates = [pos for pos in candidates if get_distance(self.pos,
                 pos) == min_dist]
+            #final_candidates = candidates
         elif (self.strategy==1):
             final_candidates = [pos for pos in candidates if get_distance(self.pos,
-                pos) == max_dist]            
+                pos) == max_dist]  
+            #final_candidates = candidates
         else:
             final_candidates = candidates
         
@@ -121,28 +124,30 @@ class SsAgent(Agent):
         if ((self.sugar>20) and (random.random() < self.model.reproduce) and (self.age>20)):
                 self.sugar = math.floor(self.sugar/2)
                 #cub = SsAgent(self.pos, self.model, False, self.sugar, self.metabolism, self.vision, self.strategy, random.randrange(60,100))
-                cub = SsAgent(self.pos, self.model, False, self.sugar, random.randrange(1, 5), random.randrange(1, 10), self.strategy, random.randrange(60,100),0,random.randint(1,8))
+                cub = SsAgent(self.pos, self.model, False, self.sugar, self.metabolism, self.vision, self.strategy, random.randrange(60,100),0,random.randint(1,8))
                                 
                 self.model.grid.place_agent(cub, cub.pos)
                 self.model.schedule.add(cub)
 
 class Sugar(Agent):
-    def __init__(self, pos, model, max_sugar):
+    def __init__(self, pos, model, max_sugar,summer_growth,winter_growth):
         super().__init__(pos, model)
         self.amount = max_sugar
         self.max_sugar = max_sugar
+        self.summer_growth = summer_growth
+        self.winter_growth = winter_growth
 
     #Sugar Seasonal Growback
     def step(self):
         if (self.model.schedule.time % 80 <= 40):
-            if ((self.pos[1]>=25) and (self.model.schedule.time%2==0)):
+            if ((self.pos[1]>=25) and (self.model.schedule.time%self.summer_growth==0)):
                 self.amount = min([self.max_sugar, self.amount + 1])
-            if (self.pos[1]<25 and (self.model.schedule.time%15==0)):
+            if (self.pos[1]<25 and (self.model.schedule.time%self.winter_growth==0)):
                 self.amount = min([self.max_sugar, self.amount + 1])
         else:
-            if ((self.pos[1]>=25) and (self.model.schedule.time%15==0)):
+            if ((self.pos[1]>=25) and (self.model.schedule.time%self.winter_growth==0)):
                 self.amount = min([self.max_sugar, self.amount + 1])
-            if (self.pos[1]<25 and (self.model.schedule.time%2==0)):
+            if (self.pos[1]<25 and (self.model.schedule.time%self.summer_growth==0)):
                 self.amount = min([self.max_sugar, self.amount + 1])
                 
 
