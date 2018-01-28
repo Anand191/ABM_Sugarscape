@@ -19,8 +19,10 @@ def get_distance(pos_1, pos_2):
 
 
 class SsAgent(Agent):
-    def __init__(self, pos, model, moore=False, sugar=0, metabolism=0, vision=0,strategy=0,maxage=0,age=0):
-        super().__init__(pos, model)
+    def __init__(self,name, u_id, pos, model, moore=False, sugar=0, metabolism=0, vision=0,strategy=0,maxage=0,age=0):
+        super().__init__(u_id, model)
+        self.name = name
+        self.u_id = u_id
         self.pos = pos
         self.moore = moore
         self.sugar = sugar
@@ -29,6 +31,8 @@ class SsAgent(Agent):
         self.strategy = strategy
         self.maxage = maxage
         self.age = age
+        self.amount = 0
+        self.max_sugar = 0
         #self.reproduce = reproduce
 
     def get_sugar(self, pos):
@@ -81,27 +85,42 @@ class SsAgent(Agent):
     def step(self):
         self.move()
         self.eat()
+
         if self.age > self.maxage:
             self.model.grid._remove_agent(self.pos, self)
             self.model.schedule.remove(self)
-            
+
         elif self.sugar <= 0:
             self.model.grid._remove_agent(self.pos, self)
             self.model.schedule.remove(self)
-            
-       #reproduction
-        if ((self.sugar>20) and (random.random() < self.model.reproduce)):
-                self.sugar = math.floor(self.sugar/2)
-                cub = SsAgent(self.pos, self.model, False, self.sugar, self.metabolism, self.vision, self.strategy, random.randrange(60,100))
-                #cub = SsAgent(self.pos, self.model, False, self.sugar, random.randrange(1, 5), random.randrange(1, 6), self.strategy, random.randrange(60,100))
-                self.model.grid.place_agent(cub, cub.pos)
-                self.model.schedule.add(cub)
+
+        # reproduction
+
+        if ((self.sugar > 20) and (random.random() < self.model.reproduce)):
+            self.sugar = math.floor(self.sugar / 2)
+            cub = SsAgent(self.name, self.u_id+101 , self.pos, self.model, False, self.sugar, self.metabolism,
+                          self.vision, self.strategy, random.randrange(60, 100))
+            # cub = SsAgent(self.pos, self.model, False, self.sugar, random.randrange(1, 5), random.randrange(1, 6), self.strategy, random.randrange(60,100))
+            self.model.schedule.add(cub)
+            self.model.grid.place_agent(cub, cub.pos)
+
+
 
 class Sugar(Agent):
-    def __init__(self, pos, model, max_sugar):
-        super().__init__(pos, model)
+    def __init__(self, u_id, pos, model, max_sugar):
+        super().__init__(u_id, model)
+        self.u_id = u_id
+        self.pos = pos
+        self.name = "sugar"
         self.amount = max_sugar
         self.max_sugar = max_sugar
+        self.moore = 0
+        self.sugar = 0
+        self.metabolism = 0
+        self.vision = 0
+        self.strategy = 0
+        self.maxage = 0
+        self.age = 0
 
     #Sugar Seasonal Growback
     def step(self):

@@ -22,7 +22,7 @@ def SsAgent_portrayal(agent):
         if agent.strategy==1:
             portrayal["Shape"] = "sugarscape/resources/ant.png"
         else:
-            portrayal["Shape"] = "sugarscape/resources/ant2.png"
+            portrayal["Shape"] = "sugarscape/resources/ant2.jpeg"
         portrayal["scale"] = 0.9
         portrayal["Layer"] = 1
 

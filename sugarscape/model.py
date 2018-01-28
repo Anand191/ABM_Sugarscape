@@ -10,6 +10,8 @@ Northwestern University, Evanston, IL.
 '''
 
 import random
+import pandas as pd
+import numpy as np
 
 from mesa import Model
 from mesa.space import MultiGrid
@@ -43,16 +45,24 @@ class SugarscapeSeasonalGrowback(Model):
 
         self.schedule = RandomActivationByBreed(self)
         self.grid = MultiGrid(self.height, self.width, torus=False)
-        self.datacollector = DataCollector({"SsAgent": lambda m: m.schedule.get_breed_count(SsAgent)})
+        self.datacollector = DataCollector({"SsAgent": lambda m: m.schedule.get_breed_count(SsAgent)},
+                                           {"name": lambda a:a.name,
+                                            "position": lambda a:a.pos,
+                                           "sugar": lambda a:a.sugar,
+                                           "metabolism": lambda a:a.metabolism,
+                                            "vision": lambda a:a.vision,
+                                            "strategy": lambda a:a.strategy})
 
         # Create sugar
         import numpy as np
         sugar_distribution = np.genfromtxt("sugarscape/sugar-map.txt")
+        z = 1000
         for _, x, y in self.grid.coord_iter():
             max_sugar = sugar_distribution[x, y]
-            sugar = Sugar((x, y), self, max_sugar)
+            sugar = Sugar(z, (x, y), self, max_sugar)
             self.grid.place_agent(sugar, (x, y))
             self.schedule.add(sugar)
+            z +=1
 
         # Create agent:
         for i in range(self.initial_population):
@@ -64,7 +74,11 @@ class SugarscapeSeasonalGrowback(Model):
             maxage = random.randrange(60,100)
             age = 0
             strategy=random.randint(0,1)
-            ssa = SsAgent((x, y), self, False, sugar, metabolism, vision,strategy, maxage, age)
+            if(strategy==0):
+                name = 'a0'
+            else:
+                name = 'a1'
+            ssa = SsAgent(name, i+1, (x, y), self, False, sugar, metabolism, vision,strategy, maxage, age)
             self.grid.place_agent(ssa, (x, y))
             self.schedule.add(ssa)
 
@@ -73,20 +87,52 @@ class SugarscapeSeasonalGrowback(Model):
     def step(self):
         self.schedule.step()
         self.datacollector.collect(self)
+
         if self.verbose:
             print([self.schedule.time,
                    self.schedule.get_breed_count(SsAgent)])
 
-    def run_model(self, step_count=10000):
+    def run_model(self, step_count=100):
 
         if self.verbose:
             print('Initial number Sugarscape Agent: ',
                   self.schedule.get_breed_count(SsAgent))
-
+        sd = np.zeros((step_count, 2))
+        master = []
         for i in range(step_count):
             self.step()
+            slave = []
+            for agent in self.schedule.agents:
+                temp = []
+                temp.extend((i,agent.u_id,agent.name,agent.pos,agent.sugar,agent.metabolism,agent.vision,agent.strategy))
+                slave.append(temp)
+            master.append(slave)
+
+            sd[i,0] = self.schedule.time
+            sd[i,1] = self.schedule.get_breed_count(SsAgent)
+        cdim = len(master[0][0])
+        rdim = 0
+        for m in master:
+            rdim += len(m)
+        feature_list = ["Step","AgentID","name","position","sugar","metabolism","vision","strategy"]
+        master_arr = np.zeros((rdim,cdim),dtype=object)
+        start = 0
+        for i in range(len(master)):
+            master_arr[start:start+len(master[i])] = master[i]
+            start = start+len(master[i])
+
+        df3 = pd.DataFrame(master_arr,columns=feature_list)
+        df3.to_csv('agent_data2.csv',index=False)
+        df2 = pd.DataFrame(sd,columns=['time', 'agents alive'])
+        df2.to_csv('check1.csv')
 
         if self.verbose:
             print('')
             print('Final number Sugarscape Agent: ',
                   self.schedule.get_breed_count(SsAgent))
+
+        #self.datacollector.get_agent_vars_dataframe().to_csv('data.csv')
+
+
+
+
