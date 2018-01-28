@@ -18,11 +18,12 @@ def SsAgent_portrayal(agent):
     portrayal = {}
 
     if type(agent) is SsAgent:
-        #red=max,black=min
-        if agent.strategy==1:
-            portrayal["Shape"] = "sugarscape/resources/ant.png"
+        if agent.strategy==0:
+            portrayal["Shape"] = "sugarscape/resources/ant0.jpeg"
+        elif agent.strategy==1:
+            portrayal["Shape"] = "sugarscape/resources/ant1.jpeg"
         else:
-            portrayal["Shape"] = "sugarscape/resources/ant2.png"
+            portrayal["Shape"] = "sugarscape/resources/ant2.jpeg"
         portrayal["scale"] = 0.9
         portrayal["Layer"] = 1
 
@@ -41,7 +42,7 @@ def SsAgent_portrayal(agent):
 
 
 canvas_element = CanvasGrid(SsAgent_portrayal, 50, 50, 500, 500)
-chart_element = ChartModule([{"Label": "SsAgent", "Color": "#AA0000"},{"Label": "ABC", "Color": "#666666"}])
+chart_element = ChartModule([{"Label": "SsAgent", "Color": "#AA0000"},{"Label": "SsAgent1", "Color": "#666666"},{"Label": "SsAgent2", "Color": "#008300"}])
 
 model_params = {"initial_population": UserSettableParameter('slider', 'Initial Population', 100, 1, 500),
                "reproduce": UserSettableParameter('slider', 'Reproduction Rate', 0.05, 0.00, 1.0,

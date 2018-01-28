@@ -43,7 +43,10 @@ class SugarscapeSeasonalGrowback(Model):
 
         self.schedule = RandomActivationByBreed(self)
         self.grid = MultiGrid(self.height, self.width, torus=False)
-        self.datacollector = DataCollector({"SsAgent": lambda m: m.schedule.get_breed_count(SsAgent)})
+        self.datacollector = DataCollector({"SsAgent": lambda m: m.schedule.get_breed_count_str0(SsAgent)
+                                            ,"SsAgent1": lambda m: m.schedule.get_breed_count_str1(SsAgent)
+                                            ,"SsAgent2": lambda m: m.schedule.get_breed_count_str2(SsAgent)
+                                           })
 
         # Create sugar
         import numpy as np
@@ -58,13 +61,15 @@ class SugarscapeSeasonalGrowback(Model):
         for i in range(self.initial_population):
             x = random.randrange(self.width)
             y = random.randrange(self.height)
-            sugar = random.randrange(6, 25)
+            sugar = random.randrange(6, 12)
             metabolism = random.randrange(1, 5)
-            vision = random.randrange(1, 6)
+            vision = random.randrange(1, 10)
             maxage = random.randrange(60,100)
             age = 0
-            strategy=random.randint(0,1)
-            ssa = SsAgent((x, y), self, False, sugar, metabolism, vision,strategy, maxage, age)
+            strategy=random.randint(0,2)
+            influ=random.randint(1,8)
+            #influ=0
+            ssa = SsAgent((x, y), self, False, sugar, metabolism, vision,strategy, maxage, age, influ)
             self.grid.place_agent(ssa, (x, y))
             self.schedule.add(ssa)
 
@@ -77,7 +82,7 @@ class SugarscapeSeasonalGrowback(Model):
             print([self.schedule.time,
                    self.schedule.get_breed_count(SsAgent)])
 
-    def run_model(self, step_count=10000):
+    def run_model(self, step_count=100):
 
         if self.verbose:
             print('Initial number Sugarscape Agent: ',

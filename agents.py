@@ -4,6 +4,7 @@ import math
 from mesa import Agent
 
 
+
 def get_distance(pos_1, pos_2):
     """ Get the distance between two point
 
@@ -19,7 +20,7 @@ def get_distance(pos_1, pos_2):
 
 
 class SsAgent(Agent):
-    def __init__(self, pos, model, moore=False, sugar=0, metabolism=0, vision=0,strategy=0,maxage=0,age=0):
+    def __init__(self, pos, model, moore=False, sugar=0, metabolism=0, vision=0,strategy=0,maxage=0,age=0,influ=0):
         super().__init__(pos, model)
         self.pos = pos
         self.moore = moore
@@ -29,6 +30,7 @@ class SsAgent(Agent):
         self.strategy = strategy
         self.maxage = maxage
         self.age = age
+        self.influ = influ
         #self.reproduce = reproduce
 
     def get_sugar(self, pos):
@@ -55,17 +57,41 @@ class SsAgent(Agent):
         
         max_dist = max([get_distance(self.pos, pos) for pos in candidates])
         
-        #Strategy chosen
-        #if (self.strategy==0):
-         #   final_candidates = [pos for pos in candidates if get_distance(self.pos,
-          #      pos) == min_dist]
-        #else:
-         #   final_candidates = [pos for pos in candidates if get_distance(self.pos,
-          #      pos) == max_dist]
         
+        
+        
+        vonneighbors = [i for i in self.model.grid.get_neighborhood(self.pos, self.moore,
+                False, radius=1) if self.is_occupied(i)]
+        num0 = len([strategy for strategy in vonneighbors if self.strategy == 0])+random.random()
+        num1 = len([strategy for strategy in vonneighbors if self.strategy == 1])+random.random()
+        num2 = len([strategy for strategy in vonneighbors if self.strategy == 2])+random.random()
+
+       
+        if (self.strategy==0):
+            num0+=self.influ
+        if (self.strategy==1):
+            num1+=self.influ
+        if (self.strategy==2):
+            num2+=self.influ
+        
+        if (num2 == max(num0,num1,num2)):
+            self.strategy=2
+        elif (num1 == max(num0,num1,num2)):
+            self.strategy=1
+        else:
+            self.strategy=0
+       
         #Strategy 2
-        final_candidates = candidates
-        
+        #final_candidates = candidates
+        #Strategy chosen
+        if (self.strategy==0):
+            final_candidates = [pos for pos in candidates if get_distance(self.pos,
+                pos) == min_dist]
+        elif (self.strategy==1):
+            final_candidates = [pos for pos in candidates if get_distance(self.pos,
+                pos) == max_dist]            
+        else:
+            final_candidates = candidates
         
         
               
@@ -75,12 +101,14 @@ class SsAgent(Agent):
     def eat(self):
         sugar_patch = self.get_sugar(self.pos)
         self.sugar = self.sugar - self.metabolism + sugar_patch.amount
-        sugar_patch.amount = 0
-        self.age = self.age + 1
-
+        sugar_patch.amount = 0        
+               
+        
+        
     def step(self):
         self.move()
         self.eat()
+        self.age = self.age + 1
         if self.age > self.maxage:
             self.model.grid._remove_agent(self.pos, self)
             self.model.schedule.remove(self)
@@ -90,10 +118,11 @@ class SsAgent(Agent):
             self.model.schedule.remove(self)
             
        #reproduction
-        if ((self.sugar>20) and (random.random() < self.model.reproduce)):
+        if ((self.sugar>20) and (random.random() < self.model.reproduce) and (self.age>20)):
                 self.sugar = math.floor(self.sugar/2)
-                cub = SsAgent(self.pos, self.model, False, self.sugar, self.metabolism, self.vision, self.strategy, random.randrange(60,100))
-                #cub = SsAgent(self.pos, self.model, False, self.sugar, random.randrange(1, 5), random.randrange(1, 6), self.strategy, random.randrange(60,100))
+                #cub = SsAgent(self.pos, self.model, False, self.sugar, self.metabolism, self.vision, self.strategy, random.randrange(60,100))
+                cub = SsAgent(self.pos, self.model, False, self.sugar, random.randrange(1, 5), random.randrange(1, 10), self.strategy, random.randrange(60,100),0,random.randint(1,8))
+                                
                 self.model.grid.place_agent(cub, cub.pos)
                 self.model.schedule.add(cub)
 
@@ -105,7 +134,7 @@ class Sugar(Agent):
 
     #Sugar Seasonal Growback
     def step(self):
-        if (self.model.schedule.time % 60 <= 30):
+        if (self.model.schedule.time % 80 <= 40):
             if ((self.pos[1]>=25) and (self.model.schedule.time%2==0)):
                 self.amount = min([self.max_sugar, self.amount + 1])
             if (self.pos[1]<25 and (self.model.schedule.time%15==0)):

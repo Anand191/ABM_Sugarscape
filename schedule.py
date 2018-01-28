@@ -72,8 +72,40 @@ class RandomActivationByBreed(RandomActivation):
         for agent in agents:
             agent.step()
 
+    def get_breed_count_str0(self, breed_class):
+        '''
+        Returns the current number of agents of certain breed in the queue.
+        '''
+        num0=0
+        for i in range (len(self.agents_by_breed[breed_class])):
+            if self.agents_by_breed[breed_class][i].strategy==0:
+                num0+=1            
+        return num0
+        
+    def get_breed_count_str1(self, breed_class):
+        '''
+        Returns the current number of agents of certain breed in the queue.
+        '''
+        num1=0
+        for i in range (len(self.agents_by_breed[breed_class])):
+            if self.agents_by_breed[breed_class][i].strategy==1:
+                num1+=1            
+        return num1
+    
+    def get_breed_count_str2(self, breed_class):
+        '''
+        Returns the current number of agents of certain breed in the queue.
+        '''
+        num2=0
+        for i in range (len(self.agents_by_breed[breed_class])):
+            if self.agents_by_breed[breed_class][i].strategy==2:
+                num2+=1            
+        return num2
+    
+    
     def get_breed_count(self, breed_class):
         '''
         Returns the current number of agents of certain breed in the queue.
         '''
+                   
         return len(self.agents_by_breed[breed_class])
