@@ -65,6 +65,9 @@ model_params = {"initial_population": UserSettableParameter('slider', 'Initial P
                                                         description="The rate at which agents reproduce."),
                "winter_growth": UserSettableParameter('slider', 'Winter Growth', 15, 5, 40,
                                                         1,
+                                                        description="The rate at which agents reproduce."),
+               "belief_num": UserSettableParameter('slider', 'Number of belief', 3, 1, 10,
+                                                        1,
                                                         description="The rate at which agents reproduce.")}
 
 server = ModularServer(SugarscapeSeasonalGrowback, [canvas_element, chart_element],

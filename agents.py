@@ -1,5 +1,6 @@
 import random
 import math
+import numpy as np
 
 from mesa import Agent
 
@@ -20,7 +21,7 @@ def get_distance(pos_1, pos_2):
 
 
 class SsAgent(Agent):
-    def __init__(self, pos, model, moore=False, sugar=0, metabolism=0, vision=0,strategy=0,maxage=0,age=0,influ=0):
+    def __init__(self, pos, model, moore=False, sugar=0, metabolism=0, vision=0,strategy=0,maxage=0,age=0,influ=0,belief=0):
         super().__init__(pos, model)
         self.pos = pos
         self.moore = moore
@@ -31,6 +32,7 @@ class SsAgent(Agent):
         self.maxage = maxage
         self.age = age
         self.influ = influ
+        self.belief=belief
         #self.reproduce = reproduce
 
     def get_sugar(self, pos):
@@ -62,24 +64,24 @@ class SsAgent(Agent):
         
         vonneighbors = [i for i in self.model.grid.get_neighborhood(self.pos, self.moore,
                 False, radius=2) if self.is_occupied(i)]
-        num0 = len([strategy for strategy in vonneighbors if self.strategy == 0])+random.random()
-        num1 = len([strategy for strategy in vonneighbors if self.strategy == 1])+random.random()
-        num2 = len([strategy for strategy in vonneighbors if self.strategy == 2])+random.random()
-
-       
-        if (self.strategy==0):
-            num0+=self.influ
-        if (self.strategy==1):
-            num1+=self.influ
-        if (self.strategy==2):
-            num2+=self.influ
+        #vonneighbors.append(self.pos)
+        num=np.zeros(self.model.belief_num)
+        for i in range (self.model.belief_num):
+            num[i] = len([belief for belief in vonneighbors if self.belief == i])+random.random()
+            if (num[i]==max(num)):
+                max_belief=i
         
-        if (num2 == max(num0,num1,num2)):
-            self.strategy=2
-        elif (num1 == max(num0,num1,num2)):
-            self.strategy=1
-        else:
+        if (self.belief==max_belief):
             self.strategy=0
+        else:
+            if (self.influ<random.random()):
+                self.strategy=1
+            else:
+                self.belief=max_belief
+                self.strategy=0
+                
+       
+        
             #num(candidate)
        
         #Strategy 2
@@ -93,8 +95,8 @@ class SsAgent(Agent):
             final_candidates = [pos for pos in candidates if get_distance(self.pos,
                 pos) == max_dist]  
             #final_candidates = candidates
-        else:
-            final_candidates = candidates
+        #else:
+         #   final_candidates = candidates
         
         
               
@@ -124,7 +126,7 @@ class SsAgent(Agent):
         if ((self.sugar>20) and (random.random() < self.model.reproduce) and (self.age>20)):
                 self.sugar = math.floor(self.sugar/2)
                 #cub = SsAgent(self.pos, self.model, False, self.sugar, self.metabolism, self.vision, self.strategy, random.randrange(60,100))
-                cub = SsAgent(self.pos, self.model, False, self.sugar, self.metabolism, self.vision, self.strategy, random.randrange(60,100),0,random.randint(1,8))
+                cub = SsAgent(self.pos, self.model, False, self.sugar, self.metabolism, self.vision, self.strategy, random.randrange(60,100),0,random.random(),random.randint(0,self.model.belief_num))
                                 
                 self.model.grid.place_agent(cub, cub.pos)
                 self.model.schedule.add(cub)

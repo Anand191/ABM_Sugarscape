@@ -24,6 +24,7 @@ class SugarscapeSeasonalGrowback(Model):
     Sugarscape Seasonal Growback
     '''
     reproduce=0.01
+    belief_num=10
     min_vision=1
     max_vision=10
     min_metabolism=1
@@ -33,7 +34,7 @@ class SugarscapeSeasonalGrowback(Model):
     verbose = True  # Print-monitoring
 
     def __init__(self, height=50, width=50,
-                 initial_population=100,reproduce=0.01,min_vision=1,max_vision=10,min_metabolism=1,max_metabolism=6,summer_growth=2,winter_growth=15):
+                 initial_population=100,reproduce=0.01,min_vision=1,max_vision=10,min_metabolism=1,max_metabolism=6,summer_growth=2,winter_growth=15,belief_num=10):
         '''
         Create a new Constant Growback model with the given parameters.
 
@@ -46,6 +47,7 @@ class SugarscapeSeasonalGrowback(Model):
         self.width = width
         self.initial_population = initial_population
         self.reproduce=reproduce
+        self.belief=random.randrange(0,belief_num)
         self.vision = random.randrange(min_vision, max_vision)
         self.metabolism = random.randrange(min_metabolism, max_metabolism)
         self.summer_growth=summer_growth
@@ -76,10 +78,11 @@ class SugarscapeSeasonalGrowback(Model):
             vision = random.randrange(min_vision, max_vision)
             maxage = random.randrange(60,100)
             age = 0
-            strategy=random.randint(0,2)
-            influ=random.randint(1,12)
+            strategy=random.randint(0,1)
+            belief=random.randrange(0,belief_num)
+            influ=random.random()
             #influ=0
-            ssa = SsAgent((x, y), self, False, sugar, metabolism, vision,strategy, maxage, age, influ)
+            ssa = SsAgent((x, y), self, False, sugar, metabolism, vision,strategy, maxage, age, influ,belief)
             self.grid.place_agent(ssa, (x, y))
             self.schedule.add(ssa)
 

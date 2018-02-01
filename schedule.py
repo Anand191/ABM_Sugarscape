@@ -78,7 +78,7 @@ class RandomActivationByBreed(RandomActivation):
         '''
         num0=0
         for i in range (len(self.agents_by_breed[breed_class])):
-            if self.agents_by_breed[breed_class][i].strategy==0:
+            if self.agents_by_breed[breed_class][i].belief==0:
                 num0+=1            
         return num0
         
@@ -88,7 +88,7 @@ class RandomActivationByBreed(RandomActivation):
         '''
         num1=0
         for i in range (len(self.agents_by_breed[breed_class])):
-            if self.agents_by_breed[breed_class][i].strategy==1:
+            if self.agents_by_breed[breed_class][i].belief==1:
                 num1+=1            
         return num1
     
@@ -98,7 +98,7 @@ class RandomActivationByBreed(RandomActivation):
         '''
         num2=0
         for i in range (len(self.agents_by_breed[breed_class])):
-            if self.agents_by_breed[breed_class][i].strategy==2:
+            if self.agents_by_breed[breed_class][i].belief==2:
                 num2+=1            
         return num2
     
