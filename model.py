@@ -24,7 +24,7 @@ class SugarscapeSeasonalGrowback(Model):
     Sugarscape Seasonal Growback
     '''
     reproduce=0.01
-    belief_num=10
+    belief_num=3
     min_vision=1
     max_vision=10
     min_metabolism=1
@@ -34,7 +34,7 @@ class SugarscapeSeasonalGrowback(Model):
     verbose = True  # Print-monitoring
 
     def __init__(self, height=50, width=50,
-                 initial_population=100,reproduce=0.01,min_vision=1,max_vision=10,min_metabolism=1,max_metabolism=6,summer_growth=2,winter_growth=15,belief_num=10):
+                 initial_population=100,reproduce=0.01,min_vision=1,max_vision=10,min_metabolism=1,max_metabolism=6,summer_growth=2,winter_growth=15,belief_num=3):
         '''
         Create a new Constant Growback model with the given parameters.
 
@@ -47,6 +47,7 @@ class SugarscapeSeasonalGrowback(Model):
         self.width = width
         self.initial_population = initial_population
         self.reproduce=reproduce
+        #self.belief_num=belief_num
         self.belief=random.randrange(0,belief_num)
         self.vision = random.randrange(min_vision, max_vision)
         self.metabolism = random.randrange(min_metabolism, max_metabolism)
@@ -58,6 +59,13 @@ class SugarscapeSeasonalGrowback(Model):
         self.datacollector = DataCollector({"SsAgent": lambda m: m.schedule.get_breed_count_str0(SsAgent)
                                             ,"SsAgent1": lambda m: m.schedule.get_breed_count_str1(SsAgent)
                                             ,"SsAgent2": lambda m: m.schedule.get_breed_count_str2(SsAgent)
+                                            ,"SsAgent3": lambda m: m.schedule.get_breed_count_str3(SsAgent)
+                                            ,"SsAgent4": lambda m: m.schedule.get_breed_count_str4(SsAgent)
+                                            ,"SsAgent5": lambda m: m.schedule.get_breed_count_str5(SsAgent)
+                                            ,"SsAgent6": lambda m: m.schedule.get_breed_count_str6(SsAgent)
+                                            ,"SsAgent7": lambda m: m.schedule.get_breed_count_str7(SsAgent)
+                                            ,"SsAgent8": lambda m: m.schedule.get_breed_count_str8(SsAgent)
+                                            ,"SsAgent9": lambda m: m.schedule.get_breed_count_str9(SsAgent)
                                            })
 
         # Create sugar

@@ -33,6 +33,7 @@ class SsAgent(Agent):
         self.age = age
         self.influ = influ
         self.belief=belief
+        #self.belief_num=self.model.belief_num
         #self.reproduce = reproduce
 
     def get_sugar(self, pos):
@@ -65,11 +66,19 @@ class SsAgent(Agent):
         vonneighbors = [i for i in self.model.grid.get_neighborhood(self.pos, self.moore,
                 False, radius=2) if self.is_occupied(i)]
         #vonneighbors.append(self.pos)
-        num=np.zeros(self.model.belief_num)
-        for i in range (self.model.belief_num):
-            num[i] = len([belief for belief in vonneighbors if self.belief == i])+random.random()
-            if (num[i]==max(num)):
-                max_belief=i
+        num=np.zeros(10)
+        for i in range (10):
+            num[i] = len([belief for belief in vonneighbors if self.belief == i])
+        
+        max_belief_list = []
+        for i in range(10):
+            if num[i]==max(num):
+                max_belief_list.append(i)
+        random.shuffle(max_belief_list)
+        max_belief=max_belief_list[0]
+        
+        if all(v == 0 for v in num):
+            max_belief=self.belief
         
         if (self.belief==max_belief):
             self.strategy=0
@@ -125,8 +134,8 @@ class SsAgent(Agent):
        #reproduction
         if ((self.sugar>20) and (random.random() < self.model.reproduce) and (self.age>20)):
                 self.sugar = math.floor(self.sugar/2)
-                #cub = SsAgent(self.pos, self.model, False, self.sugar, self.metabolism, self.vision, self.strategy, random.randrange(60,100))
-                cub = SsAgent(self.pos, self.model, False, self.sugar, self.metabolism, self.vision, self.strategy, random.randrange(60,100),0,random.random(),random.randint(0,self.model.belief_num))
+                cub = SsAgent(self.pos, self.model, False, self.sugar, self.metabolism, self.vision, self.strategy, random.randrange(60,100),0,random.random(),self.belief)
+                #cub = SsAgent(self.pos, self.model, False, self.sugar, random.randrange(min_metabolism, max_metabolism), random.randrange(min_vision, max_vision), self.strategy, random.randrange(60,100),0,random.random(),random.randint(0,self.belief_num))
                                 
                 self.model.grid.place_agent(cub, cub.pos)
                 self.model.schedule.add(cub)

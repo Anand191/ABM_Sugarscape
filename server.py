@@ -18,9 +18,9 @@ def SsAgent_portrayal(agent):
     portrayal = {}
 
     if type(agent) is SsAgent:
-        if agent.strategy==0:
+        if agent.belief==0:
             portrayal["Shape"] = "sugarscape/resources/ant0.jpeg"
-        elif agent.strategy==1:
+        elif agent.belief==1:
             portrayal["Shape"] = "sugarscape/resources/ant1.jpeg"
         else:
             portrayal["Shape"] = "sugarscape/resources/ant2.jpeg"
@@ -42,7 +42,7 @@ def SsAgent_portrayal(agent):
 
 
 canvas_element = CanvasGrid(SsAgent_portrayal, 50, 50, 500, 500)
-chart_element = ChartModule([{"Label": "SsAgent", "Color": "#AA0000"},{"Label": "SsAgent1", "Color": "#666666"},{"Label": "SsAgent2", "Color": "#008300"}])
+chart_element = ChartModule([{"Label": "SsAgent", "Color": "#AA0000"},{"Label": "SsAgent1", "Color": "#666666"},{"Label": "SsAgent2", "Color": "#000000"},{"Label": "SsAgent3", "Color": "#00FFFF"},{"Label": "SsAgent4", "Color": "#008300"},{"Label": "SsAgent5", "Color": "##FF4040"},{"Label": "SsAgent6", "Color": "#EEC591"},{"Label": "SsAgent7", "Color": "#76EE00"},{"Label": "SsAgent8", "Color": "#8B8878"},{"Label": "SsAgent9", "Color": "#B23AEE"}])
 
 model_params = {"initial_population": UserSettableParameter('slider', 'Initial Population', 100, 1, 500),
                "reproduce": UserSettableParameter('slider', 'Reproduction Rate', 0.05, 0.00, 1.0,
