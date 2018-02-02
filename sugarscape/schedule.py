@@ -8,10 +8,8 @@ class RandomActivationByBreed(RandomActivation):
     '''
     A scheduler which activates each type of agent once per step, in random
     order, with the order reshuffled every step.
-
     This is equivalent to the NetLogo 'ask breed...' and is generally the
     default behavior for an ABM.
-
     Assumes that all agents have a step() method.
     '''
     agents_by_breed = defaultdict(list)
@@ -23,7 +21,6 @@ class RandomActivationByBreed(RandomActivation):
     def add(self, agent):
         '''
         Add an Agent object to the schedule
-
         Args:
             agent: An Agent to be added to the schedule.
         '''
@@ -47,7 +44,6 @@ class RandomActivationByBreed(RandomActivation):
     def step(self, by_breed=True):
         '''
         Executes the step of each agent breed, one at a time, in random order.
-
         Args:
             by_breed: If True, run all agents of a single breed before running
                       the next one.
@@ -63,7 +59,6 @@ class RandomActivationByBreed(RandomActivation):
     def step_breed(self, breed):
         '''
         Shuffle order and run all agents of a given breed.
-
         Args:
             breed: Class object of the breed to run.
         '''
@@ -72,8 +67,109 @@ class RandomActivationByBreed(RandomActivation):
         for agent in agents:
             agent.step()
 
+    def get_breed_count_str0(self, breed_class):
+        '''
+        Returns the current number of agents of certain breed in the queue.
+        '''
+        num0 = 0
+        for i in range(len(self.agents_by_breed[breed_class])):
+            if self.agents_by_breed[breed_class][i].belief == 0:
+                num0 += 1
+        return num0
+
+    def get_breed_count_str1(self, breed_class):
+        '''
+        Returns the current number of agents of certain breed in the queue.
+        '''
+        num1 = 0
+        for i in range(len(self.agents_by_breed[breed_class])):
+            if self.agents_by_breed[breed_class][i].belief == 1:
+                num1 += 1
+        return num1
+
+    def get_breed_count_str2(self, breed_class):
+        '''
+        Returns the current number of agents of certain breed in the queue.
+        '''
+        num2 = 0
+        for i in range(len(self.agents_by_breed[breed_class])):
+            if self.agents_by_breed[breed_class][i].belief == 2:
+                num2 += 1
+        return num2
+
+    def get_breed_count_str3(self, breed_class):
+        '''
+        Returns the current number of agents of certain breed in the queue.
+        '''
+        num2 = 0
+        for i in range(len(self.agents_by_breed[breed_class])):
+            if self.agents_by_breed[breed_class][i].belief == 3:
+                num2 += 1
+        return num2
+
+    def get_breed_count_str4(self, breed_class):
+        '''
+        Returns the current number of agents of certain breed in the queue.
+        '''
+        num2 = 0
+        for i in range(len(self.agents_by_breed[breed_class])):
+            if self.agents_by_breed[breed_class][i].belief == 4:
+                num2 += 1
+        return num2
+
+    def get_breed_count_str5(self, breed_class):
+        '''
+        Returns the current number of agents of certain breed in the queue.
+        '''
+        num2 = 0
+        for i in range(len(self.agents_by_breed[breed_class])):
+            if self.agents_by_breed[breed_class][i].belief == 5:
+                num2 += 1
+        return num2
+
+    def get_breed_count_str6(self, breed_class):
+        '''
+        Returns the current number of agents of certain breed in the queue.
+        '''
+        num2 = 0
+        for i in range(len(self.agents_by_breed[breed_class])):
+            if self.agents_by_breed[breed_class][i].belief == 6:
+                num2 += 1
+        return num2
+
+    def get_breed_count_str7(self, breed_class):
+        '''
+        Returns the current number of agents of certain breed in the queue.
+        '''
+        num2 = 0
+        for i in range(len(self.agents_by_breed[breed_class])):
+            if self.agents_by_breed[breed_class][i].belief == 7:
+                num2 += 1
+        return num2
+
+    def get_breed_count_str8(self, breed_class):
+        '''
+        Returns the current number of agents of certain breed in the queue.
+        '''
+        num2 = 0
+        for i in range(len(self.agents_by_breed[breed_class])):
+            if self.agents_by_breed[breed_class][i].belief == 8:
+                num2 += 1
+        return num2
+
+    def get_breed_count_str9(self, breed_class):
+        '''
+        Returns the current number of agents of certain breed in the queue.
+        '''
+        num2 = 0
+        for i in range(len(self.agents_by_breed[breed_class])):
+            if self.agents_by_breed[breed_class][i].belief == 9:
+                num2 += 1
+        return num2
+
     def get_breed_count(self, breed_class):
         '''
         Returns the current number of agents of certain breed in the queue.
         '''
+
         return len(self.agents_by_breed[breed_class])
