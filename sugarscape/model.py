@@ -36,7 +36,7 @@ class SugarscapeSeasonalGrowback(Model):
     verbose = True  # Print-monitoring
 
     def __init__(self, height=50, width=50,
-                 initial_population=100, reproduce=0.01, min_vision=1, max_vision=10, min_metabolism=1,
+                 initial_population=100, reproduce=0.05, min_vision=1, max_vision=10, min_metabolism=1,
                  max_metabolism=6, summer_growth=2, winter_growth=15, belief_num=3):
         '''
         Create a new Constant Growback model with the given parameters.
@@ -50,7 +50,7 @@ class SugarscapeSeasonalGrowback(Model):
         self.width = width
         self.initial_population = initial_population
         self.reproduce = reproduce
-        # self.belief_num=belief_num
+        self.belief_num=belief_num
         self.belief = random.randrange(0, belief_num)
         self.vision = random.randrange(min_vision, max_vision)
         self.metabolism = random.randrange(min_metabolism, max_metabolism)
@@ -101,7 +101,7 @@ class SugarscapeSeasonalGrowback(Model):
             age = 0
             strategy=random.randint(0,1)
             influ = random.random()
-            belief = random.randint(0, belief_num-1)
+            belief = random.randint(0, self.belief_num-1)
             if(strategy==0):
                 name = 'a0'
             else:
@@ -116,11 +116,11 @@ class SugarscapeSeasonalGrowback(Model):
         self.schedule.step()
         self.datacollector.collect(self)
 
-        if self.verbose:
-            print([self.schedule.time,
-                   self.schedule.get_breed_count(SsAgent)])
+        # if self.verbose:
+        #     print([self.schedule.time,
+        #            self.schedule.get_breed_count(SsAgent)])
 
-    def run_model(self, step_count=100):
+    def run_model(self, step_count=100, idx=1):
 
         if self.verbose:
             print('Initial number Sugarscape Agent: ',
@@ -151,7 +151,7 @@ class SugarscapeSeasonalGrowback(Model):
 
         df3 = pd.DataFrame(master_arr,columns=feature_list)
         df3 = df3[df3.name != 'sugar']
-        df3.to_csv('agent_data2.csv',index=False)
+        df3.to_csv('agent_data{}.csv'.format(idx),index=False)
         # df2 = pd.DataFrame(sd,columns=['time', 'agents alive'])
         # df2.to_csv('check1.csv')
 

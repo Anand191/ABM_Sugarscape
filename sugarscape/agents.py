@@ -138,7 +138,7 @@ class SsAgent(Agent):
         if ((self.sugar > 20) and (random.random() < self.model.reproduce)):
             self.sugar = math.floor(self.sugar / 2)
             cub = SsAgent(self.name, self.u_id+101 , self.pos, self.model, False, self.sugar, self.metabolism,
-                          self.vision, self.strategy, random.randrange(60, 100),0, self.influ, self.belief)
+                          self.vision, self.strategy, random.randrange(60, 100),0, self.influ, self.belief, self.belief_num)
             # cub = SsAgent(self.pos, self.model, False, self.sugar, random.randrange(1, 5), random.randrange(1, 6), self.strategy, random.randrange(60,100))
             self.model.schedule.add(cub)
             self.model.grid.place_agent(cub, cub.pos)
