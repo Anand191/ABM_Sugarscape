@@ -43,7 +43,7 @@ def SsAgent_portrayal(agent):
 
 canvas_element = CanvasGrid(SsAgent_portrayal, 50, 50, 500, 500)
 chart_element = ChartModule([{"Label": "SsAgent", "Color": "#AA0000"},{"Label": "SsAgent1", "Color": "#666666"},{"Label": "SsAgent2", "Color": "#000000"},{"Label": "SsAgent3", "Color": "#00FFFF"},{"Label": "SsAgent4", "Color": "#008300"},{"Label": "SsAgent5", "Color": "##FF4040"},{"Label": "SsAgent6", "Color": "#EEC591"},{"Label": "SsAgent7", "Color": "#76EE00"},{"Label": "SsAgent8", "Color": "#8B8878"},{"Label": "SsAgent9", "Color": "#B23AEE"}])
-
+#chart_element = ChartModule([{"Lorenz": "Lorenz_Curve", "Color": "#AA0000"},{"Gini Index": "Gini", "Color": "#666666"}])
 model_params = {"initial_population": UserSettableParameter('slider', 'Initial Population', 100, 1, 500),
                "reproduce": UserSettableParameter('slider', 'Reproduction Rate', 0.05, 0.00, 1.0,
                                                         0.01,

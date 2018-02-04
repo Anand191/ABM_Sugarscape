@@ -27,6 +27,19 @@ def compute_gini(model):
     B = sum( xi * (N-i) for i,xi in enumerate(x) ) / (N*sum(x))
     return (1 + (1/N) - 2*B)
 
+def lorenz(model):
+    agent_wealths = [agent.sugar for agent in model.schedule.agents if agent.name != "sugar"]
+    x = sorted(agent_wealths)
+    tot_wealth = sum(x)
+    wealth_cumulative = 0
+    lorenz_curve = []
+    N = model.schedule.get_breed_count(SsAgent)
+    for j in range(N):
+        wealth_cumulative += x[j]
+        lorenz_curve.append((wealth_cumulative / tot_wealth) * 100.)
+    return lorenz_curve
+
+
 
 class SugarscapeSeasonalGrowback(Model):
     '''
@@ -68,6 +81,7 @@ class SugarscapeSeasonalGrowback(Model):
         self.grid = MultiGrid(self.height, self.width, torus=False)
         self.datacollector = DataCollector({"SsAgent": lambda m: m.schedule.get_breed_count_str0(SsAgent)
                                                ,"Gini": compute_gini
+                                               , "Lorenz_Curve": lorenz
                                                , "SsAgent1": lambda m: m.schedule.get_breed_count_str1(SsAgent)
                                                , "SsAgent2": lambda m: m.schedule.get_breed_count_str2(SsAgent)
                                                , "SsAgent3": lambda m: m.schedule.get_breed_count_str3(SsAgent)
