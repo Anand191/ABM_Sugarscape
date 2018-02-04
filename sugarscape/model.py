@@ -20,6 +20,13 @@ from mesa.datacollection import DataCollector
 from sugarscape.agents import SsAgent, Sugar
 from sugarscape.schedule import RandomActivationByBreed
 
+def compute_gini(model):
+    agent_wealths = [agent.sugar for agent in model.schedule.agents if agent.name != "sugar"]
+    x = sorted(agent_wealths)
+    N = model.schedule.get_breed_count(SsAgent)
+    B = sum( xi * (N-i) for i,xi in enumerate(x) ) / (N*sum(x))
+    return (1 + (1/N) - 2*B)
+
 
 class SugarscapeSeasonalGrowback(Model):
     '''
@@ -60,6 +67,7 @@ class SugarscapeSeasonalGrowback(Model):
         self.schedule = RandomActivationByBreed(self)
         self.grid = MultiGrid(self.height, self.width, torus=False)
         self.datacollector = DataCollector({"SsAgent": lambda m: m.schedule.get_breed_count_str0(SsAgent)
+                                               ,"Gini": compute_gini
                                                , "SsAgent1": lambda m: m.schedule.get_breed_count_str1(SsAgent)
                                                , "SsAgent2": lambda m: m.schedule.get_breed_count_str2(SsAgent)
                                                , "SsAgent3": lambda m: m.schedule.get_breed_count_str3(SsAgent)
@@ -116,9 +124,9 @@ class SugarscapeSeasonalGrowback(Model):
         self.schedule.step()
         self.datacollector.collect(self)
 
-        # if self.verbose:
-        #     print([self.schedule.time,
-        #            self.schedule.get_breed_count(SsAgent)])
+        if self.verbose:
+            print([self.schedule.time,
+                   self.schedule.get_breed_count(SsAgent)])
 
     def run_model(self, step_count=100, idx=1):
 
