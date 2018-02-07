@@ -48,7 +48,9 @@ class SugarscapeSeasonalGrowback(Model):
         self.initial_population = initial_population
         self.reproduce=reproduce
         #self.belief_num=belief_num
+        self.strategy=random.randint(0,1)
         self.belief=random.randrange(0,belief_num)
+        self.belief_num=belief_num
         self.vision = random.randrange(min_vision, max_vision)
         self.metabolism = random.randrange(min_metabolism, max_metabolism)
         self.summer_growth=summer_growth
@@ -71,11 +73,13 @@ class SugarscapeSeasonalGrowback(Model):
         # Create sugar
         import numpy as np
         sugar_distribution = np.genfromtxt("sugarscape/sugar-map.txt")
+        z = 1000
         for _, x, y in self.grid.coord_iter():
             max_sugar = sugar_distribution[x, y]
             sugar = Sugar((x, y), self, max_sugar,summer_growth,winter_growth)
             self.grid.place_agent(sugar, (x, y))
             self.schedule.add(sugar)
+            z+=1
 
         # Create agent:
         for i in range(self.initial_population):
@@ -89,8 +93,12 @@ class SugarscapeSeasonalGrowback(Model):
             strategy=random.randint(0,1)
             belief=random.randrange(0,belief_num)
             influ=random.random()
+            if(strategy==0):
+                name = 'a0'
+            else:
+                name = 'a1'
             #influ=0
-            ssa = SsAgent((x, y), self, False, sugar, metabolism, vision,strategy, maxage, age, influ,belief)
+            ssa = SsAgent(name, i+1, (x, y), self, False, sugar, metabolism, vision,strategy, maxage, age, influ, belief,belief_num)
             self.grid.place_agent(ssa, (x, y))
             self.schedule.add(ssa)
 

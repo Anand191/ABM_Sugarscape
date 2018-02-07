@@ -21,8 +21,10 @@ def get_distance(pos_1, pos_2):
 
 
 class SsAgent(Agent):
-    def __init__(self, pos, model, moore=False, sugar=0, metabolism=0, vision=0,strategy=0,maxage=0,age=0,influ=0,belief=0):
+    def __init__(self,name, u_id, pos, model, moore=False, sugar=0, metabolism=0, vision=0,strategy=0,maxage=0,age=0,influ=0,belief =0,belief_num=3):
         super().__init__(pos, model)
+        self.name = name
+        self.u_id = u_id
         self.pos = pos
         self.moore = moore
         self.sugar = sugar
@@ -33,6 +35,7 @@ class SsAgent(Agent):
         self.age = age
         self.influ = influ
         self.belief=belief
+        self.belief_num=belief_num
         #self.belief_num=self.model.belief_num
         #self.reproduce = reproduce
 
@@ -63,31 +66,38 @@ class SsAgent(Agent):
         
         
         
-        vonneighbors = [i for i in self.model.grid.get_neighborhood(self.pos, self.moore,
-                False, radius=2) if self.is_occupied(i)]
-        #vonneighbors.append(self.pos)
-        num=np.zeros(10)
-        for i in range (10):
-            num[i] = len([belief for belief in vonneighbors if self.belief == i])
-        
-        max_belief_list = []
-        for i in range(10):
-            if num[i]==max(num):
-                max_belief_list.append(i)
-        random.shuffle(max_belief_list)
-        max_belief=max_belief_list[0]
-        
-        if all(v == 0 for v in num):
-            max_belief=self.belief
-        
-        if (self.belief==max_belief):
-            self.strategy=0
+        vonneighbors = self.model.grid.get_neighbors(self.pos, self.moore,False, radius=2)
+        vonn2 = [v for v in vonneighbors if v.name != 'sugar']
+        # vonneighbors.append(self.pos)
+        num = np.zeros(self.belief_num)
+        for i in range(0,self.belief_num):
+            count = 0
+            for v in vonn2:
+                if(v.belief == i):
+                    count +=1
+            num[i] = count
+
+
+
+        if all(v == 0. for v in num):
+            self.strategy = 1
         else:
-            if (self.influ<random.random()):
-                self.strategy=1
+            max_belief_list = []
+
+            for i in range(self.belief_num):
+                if num[i] == max(num):
+                    max_belief_list.append(i)
+            random.shuffle(max_belief_list)
+            max_belief = max_belief_list[0]
+
+            if (self.belief==max_belief):
+                self.strategy = 0
             else:
-                self.belief=max_belief
-                self.strategy=0
+                if (self.influ < random.random()):
+                    self.strategy = 1
+                else:
+                    self.belief = max_belief
+                    self.strategy = 0
                 
        
         
@@ -134,7 +144,8 @@ class SsAgent(Agent):
        #reproduction
         if ((self.sugar>20) and (random.random() < self.model.reproduce) and (self.age>20)):
                 self.sugar = math.floor(self.sugar/2)
-                cub = SsAgent(self.pos, self.model, False, self.sugar, self.metabolism, self.vision, self.strategy, random.randrange(60,100),0,random.random(),self.belief)
+                cub = SsAgent(self.name, self.u_id+101 , self.pos, self.model, False, self.sugar, self.metabolism,
+                          self.vision, self.strategy, random.randrange(60, 100),0, self.influ, self.belief,self.belief_num)
                 #cub = SsAgent(self.pos, self.model, False, self.sugar, random.randrange(min_metabolism, max_metabolism), random.randrange(min_vision, max_vision), self.strategy, random.randrange(60,100),0,random.random(),random.randint(0,self.belief_num))
                                 
                 self.model.grid.place_agent(cub, cub.pos)
@@ -143,10 +154,13 @@ class SsAgent(Agent):
 class Sugar(Agent):
     def __init__(self, pos, model, max_sugar,summer_growth,winter_growth):
         super().__init__(pos, model)
+        self.name = "sugar"
         self.amount = max_sugar
         self.max_sugar = max_sugar
         self.summer_growth = summer_growth
         self.winter_growth = winter_growth
+        
+        
 
     #Sugar Seasonal Growback
     def step(self):

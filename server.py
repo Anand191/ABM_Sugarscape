@@ -5,10 +5,10 @@ from mesa.visualization.UserParam import UserSettableParameter
 from sugarscape.agents import SsAgent, Sugar
 from sugarscape.model import SugarscapeSeasonalGrowback
 
-color_dic = {4: "#005C00",
-             3: "#008300",
-             2: "#00AA00",
-             1: "#00F800"}
+color_dic = {4: "#000000",
+             3: "#3d3d3d",
+             2: "#727272",
+             1: "#bfbfbf"}
 
 
 def SsAgent_portrayal(agent):
@@ -22,8 +22,22 @@ def SsAgent_portrayal(agent):
             portrayal["Shape"] = "sugarscape/resources/ant0.jpeg"
         elif agent.belief==1:
             portrayal["Shape"] = "sugarscape/resources/ant1.jpeg"
-        else:
+        elif agent.belief==2:
             portrayal["Shape"] = "sugarscape/resources/ant2.jpeg"
+        elif agent.belief==3:
+            portrayal["Shape"] = "sugarscape/resources/ant3.jpeg"
+        elif agent.belief==4:
+            portrayal["Shape"] = "sugarscape/resources/ant4.jpeg"
+        elif agent.belief==5:
+            portrayal["Shape"] = "sugarscape/resources/ant5.jpeg"
+        elif agent.belief==6:
+            portrayal["Shape"] = "sugarscape/resources/ant6.jpeg"
+        elif agent.belief==7:
+            portrayal["Shape"] = "sugarscape/resources/ant7.jpeg"
+        elif agent.belief==8:
+            portrayal["Shape"] = "sugarscape/resources/ant8.jpeg"
+        else:    
+            portrayal["Shape"] = "sugarscape/resources/ant9.jpeg"
         portrayal["scale"] = 0.9
         portrayal["Layer"] = 1
 
@@ -31,7 +45,7 @@ def SsAgent_portrayal(agent):
         if agent.amount != 0:
             portrayal["Color"] = color_dic[agent.amount]
         else:
-            portrayal["Color"] = "#D6F5D6"
+            portrayal["Color"] = "#ffffff"
         portrayal["Shape"] = "rect"
         portrayal["Filled"] = "true"
         portrayal["Layer"] = 0
